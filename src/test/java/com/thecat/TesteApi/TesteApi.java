@@ -62,4 +62,42 @@ public class TesteApi {
         response.then().statusCode(200).body("message", containsString("SUCCESS"));
 
     }
+
+    @Test
+    public void favoritaDesfavorita(){
+        favorita();
+        desfavorita();
+    }
+
+    private void favorita() {
+        String corpo = "{\"image_id\": \"2uo\"}";
+        String url = "https://api.thecatapi.com/v1/favourites";
+
+        Response response =
+                given()
+                .contentType("application/json")
+                .header("x-api-key","live_pMjs4bSpoNxmhj1xiCRgRYkzikouxC1xPOzZfzKEksr164yPtfU0pkk5im6ZmbRw")
+                .body(corpo)
+                .when().post(url);
+
+        String id = response.jsonPath().getString("id");
+        vote_id = id;
+
+        System.out.println("Retorno Favorita => "+ response.body().asString());
+        response.then().statusCode(200).body("message", containsString("SUCCESS"));
+    }
+
+    private void desfavorita() {
+        String url = "https://api.thecatapi.com/v1/favourites/{favourite_id}";
+
+        Response response =
+                given()
+                .contentType("application/json")
+                .header("x-api-key","live_pMjs4bSpoNxmhj1xiCRgRYkzikouxC1xPOzZfzKEksr164yPtfU0pkk5im6ZmbRw")
+                .pathParam("favourite_id",vote_id)
+                .when().delete(url);
+
+        System.out.println("Retorno Desfavorita => "+ response.body().asString());
+        response.then().statusCode(200).body("message", containsString("SUCCESS"));
+    }
 }
